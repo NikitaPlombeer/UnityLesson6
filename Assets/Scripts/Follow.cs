@@ -1,0 +1,20 @@
+using UnityEngine;
+
+public class Follow : MonoBehaviour
+{
+    public Transform Target;
+    public float FollowSpeed;
+    public bool Immediate = false;
+    
+    void Update()
+    {
+        if (Immediate)
+        {
+            transform.position = Target.position;
+        }
+        else
+        {
+            transform.position = Vector3.Lerp(transform.position, Target.position, Time.deltaTime * FollowSpeed);
+        }
+    }
+}
