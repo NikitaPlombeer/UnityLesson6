@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -19,8 +17,6 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
     private Vector3 _startPosition;
     
-    private Vector3 _fromJump;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -54,8 +50,6 @@ public class PlayerController : MonoBehaviour
     {
         if (isGrounded && Input.GetKeyDown(KeyCode.Space))
         {
-            _fromJump = transform.position;
-            Debug.Log("From: " + _fromJump);
             // Подобрал эту функцию по замерам разных JumpSpeed
             // Осознаю, что скорее всего можно сделать умнее
             float jumpSpeed = Mathf.Sqrt(41 * JumpHeight); 
