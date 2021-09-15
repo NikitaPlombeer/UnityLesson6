@@ -8,7 +8,7 @@ public class Blink : MonoBehaviour
     private static readonly int EmissionColor = Shader.PropertyToID("_EmissionColor");
 
     public float BlinkTime = 1;
-    public float BlinkPerSecond = 100;
+    public float BlinkPerSecond = 5;
     public Renderer[] Renderers;
 
     public void StartBlink()

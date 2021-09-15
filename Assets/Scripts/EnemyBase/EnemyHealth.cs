@@ -1,12 +1,14 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace EnemyBase
 {
     public class EnemyHealth : MonoBehaviour
     {
 
-        public int Health;
-
+        public int Health = 1;
+        public UnityEvent OnTakeDamage;
+        
         public void TakeDamage(int damageValue)
         {
             Health -= damageValue;
@@ -14,6 +16,7 @@ namespace EnemyBase
             {
                 Die();
             }
+            OnTakeDamage.Invoke();
         }
 
         private void Die()

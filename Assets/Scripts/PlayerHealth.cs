@@ -1,6 +1,6 @@
-using System;
 using UI;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -8,15 +8,13 @@ public class PlayerHealth : MonoBehaviour
     public int Health = 5;
     public int MaxHealth = 8;
 
+    public UnityEvent OnTakeDamage;
     public HealthUI UI;
-    public Blink blinker;
-    
-    public AudioSource TakeDamageSound;
     public AudioSource AddHealthSound;
     
     private bool _invulnerable = false;
 
-
+    
     private void Start()
     {
         UI.Setup(Health);
@@ -34,9 +32,9 @@ public class PlayerHealth : MonoBehaviour
             Die();
         }
 
-        TakeDamageSound.Play();
         UI.SetHealth(Health);
-        blinker.StartBlink();
+
+        OnTakeDamage.Invoke();
         
         MakeInvulnerableFor(1f);
     }
