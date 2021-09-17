@@ -41,7 +41,10 @@ public class Blink : MonoBehaviour
     {
         foreach (Renderer r in Renderers)
         {
-            r.material.SetColor(EmissionColor, color);
+            foreach (Material material in r.materials)
+            {
+                material.SetColor(EmissionColor, color);
+            }
         }
     }
 }
