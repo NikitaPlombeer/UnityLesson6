@@ -1,27 +1,51 @@
+using System;
 using UnityEngine;
+using Utils;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
-
+    private Rigidbody _rigidbody;
+    private Vector3 _startPosition;
+    
     public Transform Body;
     public Transform ColliderTransform;
+    
     public float MoveSpeed = 5;
-    public float JumpHeight = 10;
     public float Friction = 0.2f;
-    public float MaxSpeed;
-    public float JumpControl = 0.2f;
-    public float ChangeDirectionControl = 2f;
-
-    private Rigidbody _rigidbody;
+    public float MaxSpeed = 7;
+   
     private bool isGrounded;
-    private Vector3 _startPosition;
+    public float JumpControl = 0.2f;
+    public float JumpMaxHeight = 3f;
+    public float JumpMaxLength = 6f;
+    private float _jumpGravity = 9.87f;
+    private bool _isJumping; 
+    private float _timeFromJump;
+    
     
     // Start is called before the first frame update
     void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
         _startPosition = transform.position;
+        CalculateGravity();
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Vector3 start = transform.position;
+        Vector3 end = start + JumpMaxLength * Vector3.right;
+        float count = 20;
+        Vector3 lastP = start;
+        for (float i = 0; i < count + 1; i++) {
+            Vector3 p = GizmosUtils.SampleParabola (start, end, JumpMaxHeight, i / count);
+            Gizmos.color = i % 2 == 0 ? Color.blue : Color.green;
+            Gizmos.DrawLine (lastP, p);
+            lastP = p;
+        }
+        
     }
 
     private void Update()
@@ -48,13 +72,24 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        if (isGrounded && Input.GetKeyDown(KeyCode.Space))
+        if (!_isJumping && Input.GetKeyDown(KeyCode.Space))
         {
-            // Подобрал эту функцию по замерам разных JumpSpeed
-            // Осознаю, что скорее всего можно сделать умнее
-            float jumpSpeed = Mathf.Sqrt(41 * JumpHeight); 
-            _rigidbody.AddForce(0, jumpSpeed, 0f, ForceMode.VelocityChange);
+            _isJumping = true;
+         
+            float xh = JumpMaxLength / 2f;
+             float v0 = 2 * JumpMaxHeight * MaxSpeed / xh; // aka Up speed
+            float velocityX = _rigidbody.velocity.x;
+            if (velocityX < 0.01f) velocityX = 0f;
+            _rigidbody.velocity = new Vector3(velocityX, v0, 0f);
+
+            _timeFromJump = 0f;
         }
+    }
+
+    private void CalculateGravity()
+    {
+        float xh = JumpMaxLength / 2f;
+        _jumpGravity = -2 * JumpMaxHeight * Mathf.Pow(MaxSpeed, 2) / Mathf.Pow(xh, 2);
     }
 
     private void Rotate()
@@ -76,41 +111,83 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!isGrounded)
+        {
+            if (_isJumping) { _timeFromJump += Time.deltaTime; }
+        } else if (_timeFromJump > 0.2f)
+        {
+            _isJumping = false;
+        }
+
+        MovePlayer();
+        ApplyGravity();
+    }
+    
+
+    private void MovePlayer()
+    {
         float speedMultiplier = 1;
         if (!isGrounded)
         {
-            // Если знак скорости и инпута одинаковые, то игрок движется в том же направлении что и раньше
-            int inputSign = (int) Mathf.Sign(Input.GetAxis("Horizontal"));
-            int velocitySign = (int) Mathf.Sign(_rigidbody.velocity.x);
-            bool isSameDirection = (inputSign == velocitySign);
-
-            speedMultiplier = JumpControl;
-            if (Mathf.Abs(_rigidbody.velocity.x) >= MaxSpeed)
-            {
-                Vector3 velocity = _rigidbody.velocity;
-                _rigidbody.velocity = new Vector3(velocitySign * MaxSpeed, velocity.y, velocity.z);
-                
-                if (isSameDirection)
-                {
-                    speedMultiplier = 0;
-                } 
-            }
-
-            // Условие для того, чтобы сделать персонажа более управляемым, во время смены движения в прыжке
-            if (!isSameDirection && Mathf.Abs(Input.GetAxis("Horizontal")) > 0.1f)
-            {
-                speedMultiplier = ChangeDirectionControl;
-            }
+            speedMultiplier = GetSpeedMultiplierInAir();
+            AdjustVelocityIfRequired();
         }
 
-        _rigidbody.AddForce(Input.GetAxis("Horizontal") * MoveSpeed * speedMultiplier, 0f, 0f, ForceMode.VelocityChange);
+        float xForce = Input.GetAxis("Horizontal") * MoveSpeed * speedMultiplier;
+        _rigidbody.AddForce(xForce, 0f, 0f, ForceMode.VelocityChange);
         
-        if (isGrounded)
+        if (!_isJumping && isGrounded)
         {
             _rigidbody.AddForce(-_rigidbody.velocity.x * Friction, 0f, 0f, ForceMode.VelocityChange);
         }
     }
 
+    private float GetSpeedMultiplierInAir()
+    {
+        float speedMultiplier = JumpControl;
+        if (!IsMaxSpeedReached()) return speedMultiplier;
+        
+        // Если знак скорости и инпута одинаковые, то игрок движется в том же направлении что и раньше
+        bool isSameDirection = IsSignTheSame(
+            Input.GetAxis("Horizontal"), 
+            _rigidbody.velocity.x
+        );
+        if (isSameDirection)
+        {
+            speedMultiplier = 0;
+        }
+
+        return speedMultiplier;
+    }
+    
+    private void AdjustVelocityIfRequired()
+    {
+        if (!IsMaxSpeedReached()) return;
+
+        int velocitySign = (int) Mathf.Sign(_rigidbody.velocity.x);
+        Vector3 currentVel = _rigidbody.velocity;
+        _rigidbody.velocity = new Vector3(velocitySign * MaxSpeed, currentVel.y, currentVel.z);
+    }
+
+    private bool IsMaxSpeedReached()
+    {
+        return Mathf.Abs(_rigidbody.velocity.x) > MaxSpeed;
+    }
+
+    private bool IsSignTheSame(float v1, float v2)
+    {
+        int s1 = (int) Mathf.Sign(v1);
+        int s2 = (int) Mathf.Sign(v2);
+        return (s1 == s2);
+    }
+    
+    private void ApplyGravity()
+    {
+        var currentVel = _rigidbody.velocity;
+        currentVel.y += _jumpGravity * Time.deltaTime;
+        _rigidbody.velocity = currentVel;
+    }
+    
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Respawn"))

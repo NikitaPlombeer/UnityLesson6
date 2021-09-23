@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Blink : MonoBehaviour
@@ -14,14 +13,6 @@ public class Blink : MonoBehaviour
     public void StartBlink()
     {
         StartCoroutine(BlinkEffect());
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            StartBlink(); // TODO remove just a test
-        }
     }
 
     private IEnumerator BlinkEffect()
