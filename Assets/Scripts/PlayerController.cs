@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using Utils;
 
@@ -82,7 +83,7 @@ public class PlayerController : MonoBehaviour
             if (velocityX < 0.01f) velocityX = 0f;
             _rigidbody.velocity = new Vector3(velocityX, v0, 0f);
 
-            _timeFromJump = 0f;
+            StartCoroutine(GroundCheckAfterJump());
         }
     }
 
@@ -111,10 +112,7 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!isGrounded)
-        {
-            if (_isJumping) { _timeFromJump += Time.deltaTime; }
-        } else if (_timeFromJump > 0.2f)
+        if (_isJumping && isGrounded && _timeFromJump > 0.2f)
         {
             _isJumping = false;
         }
@@ -122,7 +120,16 @@ public class PlayerController : MonoBehaviour
         MovePlayer();
         ApplyGravity();
     }
-    
+
+    private IEnumerator GroundCheckAfterJump()
+    {
+        _timeFromJump = 0f;
+        while (_isJumping)
+        {
+            _timeFromJump += Time.deltaTime;
+            yield return new WaitForFixedUpdate();
+        }
+    }
 
     private void MovePlayer()
     {
