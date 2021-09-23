@@ -2,14 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CarrotCreator : MonoBehaviour
+public class PrefabCreator : MonoBehaviour
 {
 
-    public GameObject CarrotPrefab;
+    public GameObject Prefab;
     public Transform Spawn;
     
     public void Create()
     {
-        Instantiate(CarrotPrefab, Spawn.position, Quaternion.identity);
+        Instantiate(Prefab, Spawn.position, Spawn.rotation);
     }
 }

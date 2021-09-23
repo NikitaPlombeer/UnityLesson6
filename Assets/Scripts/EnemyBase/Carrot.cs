@@ -7,6 +7,8 @@ public class Carrot : MonoBehaviour
     
     void Start()
     {
+        transform.rotation = Quaternion.identity;
+        
         Rigidbody rb = GetComponent<Rigidbody>();
         Transform player = FindObjectOfType<PlayerController>().transform;
         

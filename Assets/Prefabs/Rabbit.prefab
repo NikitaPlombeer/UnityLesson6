@@ -39,10 +39,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1534910857864367583}
-  - component: {fileID: 1534910857864367580}
   - component: {fileID: 3299469239948077901}
   - component: {fileID: 8446904743202918048}
   - component: {fileID: 7296146270590309767}
+  - component: {fileID: 3042107119557643208}
   m_Layer: 0
   m_Name: Rabbit
   m_TagString: Untagged
@@ -67,20 +67,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1534910857864367580
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1534910857864367582}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 27aef3587f99e4d1e87edce9c766cd26, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Animator: {fileID: 1534910857346651988}
-  AttackPeriod: 7
 --- !u!114 &3299469239948077901
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165,6 +151,22 @@ MonoBehaviour:
   LeftEuler: {x: 0, y: -30, z: 0}
   RightEuler: {x: 0, y: -150, z: 0}
   RotationSpeed: 5
+--- !u!114 &3042107119557643208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1534910857864367582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00a67be99d82f4c15b6ef06cdafc471f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Animator: {fileID: 1534910857346651988}
+  WaitAfterTrigger: 4.5
+  Period: 7
+  TriggerName: StartAttack
 --- !u!95 &1534910857346651988
 Animator:
   serializedVersion: 3
@@ -196,7 +198,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1dbde765b468f4b07983bb7835c22f79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CarrotPrefab: {fileID: 4567700810913322885, guid: 0ce11de66b38543b996fe58b4e81ddab, type: 3}
+  Prefab: {fileID: 4567700810913322885, guid: 0ce11de66b38543b996fe58b4e81ddab, type: 3}
   Spawn: {fileID: 1534910856279111164}
 --- !u!1 &5172447623110996503
 GameObject:

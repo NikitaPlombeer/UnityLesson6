@@ -10,14 +10,16 @@ namespace EnemyBase
         private void OnTriggerEnter(Collider other)
         {
             Rigidbody otherRigidbody = other.attachedRigidbody;
-            if (!otherRigidbody) return;
-            
-            Bullet bullet = otherRigidbody.GetComponent<Bullet>();
-            if (bullet)
+            if (otherRigidbody)
             {
-                Health.TakeDamage(1); 
-                bullet.Die();
+                Bullet bullet = otherRigidbody.GetComponent<Bullet>();
+                if (bullet)
+                {
+                    Health.TakeDamage(1); 
+                    bullet.Die();
+                }
             }
+         
 
             if (DieOnAnyCollision)
             {
