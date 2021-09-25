@@ -10,11 +10,16 @@ public class Follow : MonoBehaviour
     {
         if (Immediate)
         {
-            transform.position = Target.position;
+            ImmediatelyMove();
         }
         else
         {
             transform.position = Vector3.Lerp(transform.position, Target.position, Time.deltaTime * FollowSpeed);
         }
+    }
+
+    public void ImmediatelyMove()
+    {
+        transform.position = Target.position;
     }
 }

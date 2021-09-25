@@ -5,6 +5,7 @@ namespace EnemyBase
     public class TakeDamageOnTrigger : MonoBehaviour
     {
         public EnemyHealth Health;
+        public int Damage = 1;
         public bool DieOnAnyCollision;
 
         private void OnTriggerEnter(Collider other)
@@ -15,7 +16,7 @@ namespace EnemyBase
                 Bullet bullet = otherRigidbody.GetComponent<Bullet>();
                 if (bullet)
                 {
-                    Health.TakeDamage(1); 
+                    Health.TakeDamage(Damage); 
                     bullet.Die();
                 }
             }
