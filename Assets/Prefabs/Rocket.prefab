@@ -73,6 +73,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Health: {fileID: 4026739070644711572}
+  Damage: 1
   DieOnAnyCollision: 1
 --- !u!1 &4026739070644711575
 GameObject:

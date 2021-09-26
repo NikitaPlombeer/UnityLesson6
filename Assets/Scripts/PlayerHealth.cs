@@ -23,8 +23,7 @@ public class PlayerHealth : MonoBehaviour
     public void TakeDamage(int damageValue)
     {
         if (_invulnerable) return;
-      
-
+        
         Health -= damageValue;
         if (Health <= 0)
         {
